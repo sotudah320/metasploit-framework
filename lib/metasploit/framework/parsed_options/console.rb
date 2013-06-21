@@ -8,7 +8,7 @@ class Metasploit::Framework::ParsedOptions::Console < Metasploit::Framework::Par
       super.tap { |options|
         options.console = ActiveSupport::OrderedOptions.new
 
-        options.console.commands = []
+        options.console.commands = ""
         options.console.confirm_exit = false
         options.console.histfile = nil
         options.console.local_output = nil
@@ -69,7 +69,7 @@ class Metasploit::Framework::ParsedOptions::Console < Metasploit::Framework::Par
             '--execute-command COMMAND',
             'Execute the specified string as console commands (use ; for multiples)'
         ) do |commands|
-          options.console.commands += commands.split(/\s*;\s*/)
+          options.console.commands = commands
         end
       }
     end

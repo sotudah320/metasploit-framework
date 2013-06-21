@@ -501,8 +501,7 @@ module DispatcherShell
 		opts = {:col_sep => separator, :quote_char => quote_char}
 		lines = parse_multi_line(line, opts)
 		all_commands_found = true
-		if lines.empty?
-			print_error "No parsable commands were found."
+		if lines.blank?
 			return false
 		end
 		lines.each do |l|

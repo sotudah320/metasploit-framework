@@ -89,7 +89,7 @@ class WebConsole
   end
 
   def execute(cmd)
-    self.console.run_single(cmd)
+    self.console.run_multiple(cmd)
   end
 
   def prompt
@@ -142,9 +142,6 @@ class WebConsole
   end
 
 end
-
-
 end
 end
 end
-

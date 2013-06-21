@@ -203,7 +203,7 @@ module Shell
         else
         # Otherwise, call what should be an overriden instance method to
         # process the line.
-          ret = run_single(line)
+          ret = run_multiple(line)
           # don't bother saving lines that couldn't be found as a
           # command, create the file if it doesn't exist
           if ret and self.histfile

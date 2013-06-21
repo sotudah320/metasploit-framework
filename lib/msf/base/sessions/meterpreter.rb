@@ -371,7 +371,7 @@ class Meterpreter < Rex::Post::Meterpreter::Client
       stored_output_state = console.output
       console.send(:output=, output_object)
     end
-    success = console.run_single(cmd)
+    success = console.run_multiple(cmd)
     # If we stored the previous output object of the channel
     # we restore it here to put everything back the way we found it
     # We re-use the conditional above, because we expect in many cases for
