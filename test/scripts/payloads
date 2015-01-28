@@ -1,0 +1,11 @@
+# 32-bit windows
+#windows/shell/reverse_tcp
+#windows/shell/reverse_http
+#windows/shell/reverse_https
+windows/meterpreter/reverse_tcp
+windows/meterpreter/reverse_http
+windows/meterpreter/reverse_https
+
+# 64-bit windows
+windows/x64/meterpreter/reverse_tcp
+windows/x64/meterpreter/reverse_https

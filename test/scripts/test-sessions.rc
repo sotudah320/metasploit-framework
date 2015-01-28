@@ -10,9 +10,18 @@ def run_for_session(modname, id)
   run_single("run")
 end
 
+def run_for_session_local_pivot(modname, id)
+  print_line(modname)
+  run_single("route add 127.0.0.1 255.255.255.255 1")
+  run_single("use #{modname}")
+  run_single("set RHOSTS 127.0.0.1")
+  run_single("set SESSION #{id}")
+end
+
 framework.sessions.each do |id, s|
   if s.type == 'meterpreter'
     run_for_session("post/test/meterpreter", id)
+    run_for_session_local_pivot("auxiliary/scanner/ssh/ssh_version", id)
 
     if s.sys.config.sysinfo["OS"] =~ /win/in
       run_for_session("post/test/registry", id)
@@ -30,4 +39,3 @@ end
 </ruby>
 
 <%= old_mod ? "use #{old_mod.refname}" : "back" %>
-
