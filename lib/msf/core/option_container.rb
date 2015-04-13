@@ -499,6 +499,32 @@ end
 
 ###
 #
+# Float option.
+#
+###
+class OptFloat < OptBase
+  def type
+    return 'float'
+  end
+
+  def normalize(value)
+    value.to_f
+  end
+
+  def valid?(value)
+    return super if !required? and value.to_s.empty?
+    return false if empty_required_value?(value)
+
+    if value && value.to_s !~ /^\s*[+-]?((\d+_?)*\d+(\.(\d+_?)*\d+)?|\.(\d+_?)*\d+)(\s*|([eE][+-]?(\d+_?)*\d+)\s*)$/
+      return false
+    end
+
+    return super
+  end
+end
+
+###
+#
 # Regexp option
 #
 ###
