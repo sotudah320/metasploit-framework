@@ -72,7 +72,7 @@ RSpec.shared_context 'untested payloads' do |options={}|
         end
       end
 
-      $stderr.puts "Some payloads are untested.  See log/untested-payload.log for details."
+      $stderr.puts "Some payloads are untested.  See log/untested-payloads.log for details."
     end
   end
 end
