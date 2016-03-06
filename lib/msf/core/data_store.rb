@@ -245,9 +245,11 @@ protected
   #
   def find_key_case(k)
 
+    ck = k.downcase
+
     # Scan each key looking for a match
     self.each_key do |rk|
-      if (rk.downcase == k.downcase)
+      if (rk.downcase == ck.downcase)
         return rk
       end
     end
