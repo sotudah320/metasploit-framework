@@ -1,5 +1,6 @@
 require 'pathname'
 require 'rubygems'
+require 'bundler/setup'
 
 GEMFILE_EXTENSIONS = [
     '.local',
@@ -20,14 +21,6 @@ unless ENV['BUNDLE_GEMFILE']
       break
     end
   end
-end
-
-begin
-  require 'bundler/setup'
-rescue LoadError
-  $stderr.puts "[*] Metasploit requires the Bundler gem to be installed"
-  $stderr.puts "    $ gem install bundler"
-  exit(1)
 end
 
 lib_path = root.join('lib').to_path
