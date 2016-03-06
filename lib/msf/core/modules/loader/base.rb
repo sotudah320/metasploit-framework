@@ -333,12 +333,11 @@ class Msf::Modules::Loader::Base
     nested_module_names = namespace_module_names.reverse
 
     namespace_module_content = nested_module_names.inject(NAMESPACE_MODULE_CONTENT) { |wrapped_content, module_name|
-      lines = []
-      lines << "module #{module_name}"
-      lines << wrapped_content
-      lines << "end"
-
-      lines.join("\n")
+      %Q(
+      module #{module_name}
+      #{wrapped_content}
+      end
+      )
     }
 
     # - because the added wrap lines have to act like they were written before NAMESPACE_MODULE_CONTENT
@@ -365,8 +364,8 @@ class Msf::Modules::Loader::Base
       # semantically equivalent to providing false for the 1.9-only
       # "inherit" parameter to const_defined?. If we ever drop 1.8
       # support, we can save a few cycles here by adding it back.
-      if parent.const_defined?(module_name)
-        parent.const_get(module_name)
+      if parent.const_defined?(module_name, inherit: false)
+        parent.const_get(module_name, inherit: false)
       else
         break
       end
@@ -457,17 +456,9 @@ class Msf::Modules::Loader::Base
   #                   the path is not hidden (starts with '.')
   # @return [false] otherwise
   def module_path?(path)
-    module_path = false
-
-    extension = File.extname(path)
-
-    unless (path[0,1] == "." or
-            extension != MODULE_EXTENSION or
-            path =~ UNIT_TEST_REGEX)
-      module_path = true
-    end
-
-    module_path
+    path[0,1] != "." &&
+      File.extname(path) == MODULE_EXTENSION &&
+      path !=~ UNIT_TEST_REGEX
   end
 
   # Changes a file name path to a canonical module reference name.
@@ -506,7 +497,7 @@ class Msf::Modules::Loader::Base
   #
   # @see namespace_module
   def namespace_module_names(module_full_name)
-    NAMESPACE_MODULE_NAMES + [ "Mod" + module_full_name.unpack("H*").first.downcase ]
+    NAMESPACE_MODULE_NAMES + [ module_full_name.gsub('/', '_').classify ]
   end
 
   def namespace_module_transaction(module_full_name, options={}, &block)
@@ -604,9 +595,7 @@ class Msf::Modules::Loader::Base
   def self.typed_path(type, module_reference_name)
     file_name = module_reference_name + MODULE_EXTENSION
     type_directory = DIRECTORY_BY_TYPE[type]
-    typed_path = File.join(type_directory, file_name)
-
-    typed_path
+    File.join(type_directory, file_name)
   end
 
   # The path to the module qualified by the type directory.
