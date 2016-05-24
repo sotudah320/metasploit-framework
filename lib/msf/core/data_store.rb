@@ -249,9 +249,7 @@ protected
 
     # Scan each key looking for a match
     self.each_key do |rk|
-      if (rk.downcase == ck.downcase)
-        return rk
-      end
+      return rk if rk.downcase == ck
     end
 
     # Fall through to the non-existent value
