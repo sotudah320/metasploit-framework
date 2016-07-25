@@ -225,16 +225,14 @@ class Process < Rex::Post::Process
     arch = ""
 
     pa = p.get_tlv_value(TLV_TYPE_PROCESS_ARCH)
-    if pa != nil
-      if pa.is_a? String
-        arch = pa
-      else
-        if pa == 1 # PROCESS_ARCH_X86
-          arch = ARCH_X86
-        elsif pa == 2 # PROCESS_ARCH_X64
-          arch = ARCH_X86_64
-        end
+    if !pa.nil?
+      if pa == 1 # PROCESS_ARCH_X86
+        arch = ARCH_X86
+      elsif pa == 2 # PROCESS_ARCH_X64
+        arch = ARCH_X86_64
       end
+    else
+      arch = p.get_tlv_value(TLV_TYPE_PROCESS_ARCH_NAME)
     end
 
     processes <<
