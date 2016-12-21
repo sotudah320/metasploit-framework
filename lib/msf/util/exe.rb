@@ -1058,6 +1058,17 @@ require 'msf/core/exe/segment_appender'
   def self.to_linux_x64_elf_dll(framework, code, opts = {})
     to_exe_elf(framework, opts, "template_x64_linux_dll.bin", code)
   end
+  #
+  # Create a 32-bit Linux ELF_DYN containing the payload provided in +code+
+  #
+  # @param framework [Msf::Framework]
+  # @param code       [String]
+  # @param opts       [Hash]
+  # @option           [String] :template
+  # @return           [String] Returns an elf
+  def self.to_linux_x86_elf_dll(framework, code, opts = {})
+    to_exe_elf(framework, opts, "template_x86_linux_dll.bin", code)
+  end
 
   # self.to_linux_mipsle_elf
   #
@@ -2116,6 +2127,8 @@ require 'msf/core/exe/segment_appender'
       end
       if !plat || plat.index(Msf::Module::Platform::Linux)
         case arch
+        when ARCH_X86
+          to_linux_x86_elf_dll(framework, code, exeopts)
         when ARCH_X64
           to_linux_x64_elf_dll(framework, code, exeopts)
         end
