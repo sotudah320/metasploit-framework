@@ -19,6 +19,7 @@ PATH
       activesupport (~> 4.2.6)
       backports
       bcrypt
+      bcrypt_pbkdf
       bit-struct
       dnsruby
       filesize
@@ -47,6 +48,8 @@ PATH
       pg (= 0.20.0)
       railties
       rb-readline
+      rbnacl (< 5.0.0)
+      rbnacl-libsodium
       recog
       redcarpet
       rex-arch
@@ -116,6 +119,7 @@ GEM
       activerecord (>= 3.1.0, < 6)
     backports (3.8.0)
     bcrypt (3.1.11)
+    bcrypt_pbkdf (1.0.0)
     bindata (2.4.0)
     bit-struct (0.16)
     builder (3.2.3)
@@ -245,6 +249,10 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (12.0.0)
+    rbnacl (4.0.2)
+      ffi
+    rbnacl-libsodium (1.0.11)
+      rbnacl (>= 3.0.1)
     recog (2.1.11)
       nokogiri
     redcarpet (3.4.0)
