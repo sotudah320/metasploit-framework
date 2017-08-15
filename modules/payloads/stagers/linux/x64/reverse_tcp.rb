@@ -11,7 +11,7 @@ module MetasploitModule
   CachedSize = 96
 
   include Msf::Payload::Stager
-  include Msf::Payload::Linux::ReverseTcp
+  include Msf::Payload::Linux::ReverseTcp_x64
 
   def initialize(info = {})
     super(merge_info(info,
