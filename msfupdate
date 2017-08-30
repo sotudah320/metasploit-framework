@@ -223,6 +223,7 @@ class Msfupdate
     system("git", "merge", "#{remote}/#{branch}")
 
     stdout.puts "[*] Updating gems..."
+    system('gem', 'update', '--system')
     begin
       require 'bundler'
     rescue LoadError

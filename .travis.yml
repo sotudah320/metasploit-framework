@@ -31,7 +31,9 @@ before_install:
   - ln -sf ../../tools/dev/pre-commit-hook.rb ./.git/hooks/post-merge
   - ls -la ./.git/hooks
   - ./.git/hooks/post-merge
-  # Update the bundler
+  # Grab latest rubygems release
+  - gem update --system
+  # Update bundler
   - gem install bundler
 before_script:
   - cp config/database.yml.travis config/database.yml
