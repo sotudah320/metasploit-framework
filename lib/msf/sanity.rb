@@ -3,7 +3,7 @@
 # Provides some sanity checks against the ruby build and version
 #
 
-if(RUBY_PLATFORM == 'java')
+if RUBY_PLATFORM == 'java'
   require 'socket'
   s = Socket.new(::Socket::AF_INET, ::Socket::SOCK_STREAM, ::Socket::IPPROTO_TCP)
   if(not s.respond_to?('bind'))
@@ -25,4 +25,11 @@ begin
 rescue ::LoadError
   $stderr.puts "*** The ruby-openssl library is not installed, many features will be disabled!"
   $stderr.puts "*** Examples: Meterpreter, SSL Sockets, SMB/NTLM Authentication, and more"
+end
+
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4.0')
+  require 'backports/version'
+  require 'backports/2.4'
+  require 'backports/2.4.0/string/match'
+  require 'backports/rails'
 end
