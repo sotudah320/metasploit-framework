@@ -68,7 +68,7 @@ class MetasploitModule < Msf::Auxiliary
         print_error "Source MAC (SMAC) `#{smac}' is badly formatted."
       else
         print_status "Starting DTP spoofing service..."
-        open_pcap({'FILTER' => "ether host 01:00:0c:cc:cc:cc"})
+        open_pcap(filter: "ether host 01:00:0c:cc:cc:cc")
         interface = datastore['INTERFACE'] || Pcap.lookupdev
         dtp = build_dtp_frame()
         @run = true

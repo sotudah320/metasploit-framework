@@ -34,7 +34,7 @@ class MetasploitModule < Msf::Auxiliary
 
   def run
     print_status("Opening the network interface...")
-    open_pcap()
+    open_pcap
 
     print_status("Sniffing HTTP requests...")
     each_packet() do |pkt|

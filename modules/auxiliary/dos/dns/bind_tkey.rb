@@ -31,14 +31,10 @@ class MetasploitModule < Msf::Auxiliary
       ],
       'DisclosureDate' => 'Jul 28 2015',
       'License'        => MSF_LICENSE,
-      'DefaultOptions' => {'ScannerRecvWindow' => 0}
+      'DefaultOptions' => { 'ScannerRecvWindow' => 0 }
     ))
 
-    register_options([
-      Opt::RPORT(53),
-    ])
-
-    deregister_options('PCAPFILE', 'FILTER', 'SNAPLEN', 'TIMEOUT')
+    register_options([ Opt::RPORT(53) ])
   end
 
   def build_probe

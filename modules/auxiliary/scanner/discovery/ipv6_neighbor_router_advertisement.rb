@@ -149,7 +149,7 @@ class MetasploitModule < Msf::Auxiliary
 
   def run
     # Start capture
-    open_pcap({'FILTER' => "icmp6"})
+    open_pcap(filter: "icmp6")
 
     @prefix = generate_prefix()
     @netifaces = true

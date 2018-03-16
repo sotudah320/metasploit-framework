@@ -59,7 +59,7 @@ class MetasploitModule < Msf::Auxiliary
     p.ip_daddr = dst
     p.icmp_type = 8
     payload = Rex::Socket.addr_aton(dst) + [datastore['ECHOID']].pack('n') + Rex::Text.rand_text(26)
-    p.payload = capture_icmp_echo_pack(datastore['ECHOID'],1,payload)
+    p.payload = [datastore['ECHOID'], 1, payload.to_s].pack("nna*")
     p.recalc
   end
 end

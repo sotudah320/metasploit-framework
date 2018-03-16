@@ -191,7 +191,7 @@ attr_accessor :sock, :thread
     ::Socket.do_not_reverse_lookup = true  # Mac OS X workaround
 
     # Avoid receiving extraneous traffic on our send socket
-    open_pcap({'FILTER' => 'ether host f0:f0:f0:f0:f0:f0'})
+    open_pcap(filter: 'ether host f0:f0:f0:f0:f0:f0')
 
     # Multicast Address for LLMNR
     multicast_addr = ::IPAddr.new("224.0.0.252")

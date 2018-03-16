@@ -104,7 +104,15 @@ module Auxiliary::UDPScanner
   # Send a spoofed packet to a given host and port
   def scanner_spoof_send(data, ip, port, srcip, num_packets = 1)
     open_pcap
-    p = PacketFu::UDPPacket.new
+    addrinfo = Addrinfo.ip(ip)
+    if addrinfo.ipv4?
+      p = PacketFu::UDPPacket.new
+      # For packets under minimum IPv6 mtu (this is a guess),
+      # mark as don't-frag
+      p.ip_frag = data.length <= 1238 ? 0x4000 : 0
+    else
+      p = PacketFu::UDPPacket.new(on_ipv6: true)
+    end
     p.ip_saddr = srcip
     p.ip_daddr = ip
     p.udp_src = rand(1024..65535)

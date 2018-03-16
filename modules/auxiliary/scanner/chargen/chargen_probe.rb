@@ -4,11 +4,7 @@
 ##
 
 class MetasploitModule < Msf::Auxiliary
-  include Msf::Auxiliary::Scanner
-  include Msf::Exploit::Capture
   include Msf::Auxiliary::Report
-  include Msf::Exploit::Remote::Udp
-  include Msf::Auxiliary::DRDoS
   include Msf::Auxiliary::UDPScanner
 
   def initialize

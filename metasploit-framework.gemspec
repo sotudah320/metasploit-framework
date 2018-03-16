@@ -76,7 +76,7 @@ Gem::Specification.new do |spec|
   # Needed by msfgui and other rpc components
   spec.add_runtime_dependency 'msgpack'
   # get list of network interfaces, like eth* from OS.
-  spec.add_runtime_dependency 'network_interface'
+  spec.add_runtime_dependency 'network_interface' if Gem.win_platform?
   # NTLM authentication
   spec.add_runtime_dependency 'rubyntlm'
   # Needed by anemone crawler

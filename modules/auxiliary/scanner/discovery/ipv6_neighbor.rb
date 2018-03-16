@@ -36,7 +36,7 @@ class MetasploitModule < Msf::Auxiliary
   end
 
   def run_batch(hosts)
-    open_pcap({'SNAPLEN' => 68, 'FILTER' => "arp[6:2] == 0x0002"})
+    open_pcap(snaplen: 68, filter: "arp[6:2] == 0x0002")
 
     @netifaces = true
     if not netifaces_implemented?
@@ -112,7 +112,7 @@ class MetasploitModule < Msf::Auxiliary
     print_status("")
 
     smac  = @smac
-    open_pcap({'SNAPLEN' => 68, 'FILTER' => "icmp6"})
+    open_pcap(snaplen: 68, filter: "icmp6")
 
     begin
       neighs.each do |neigh|

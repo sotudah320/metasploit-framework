@@ -141,7 +141,7 @@ class MetasploitModule < Msf::Auxiliary
     ::Socket.do_not_reverse_lookup = true  # Mac OS X workaround
 
     # Avoid receiving extraneous traffic on our send socket
-    open_pcap({'FILTER' => 'ether host f0:f0:f0:f0:f0:f0'})
+    open_pcap(filter: 'ether host f0:f0:f0:f0:f0:f0')
 
     self.sock = Rex::Socket.create_udp(
       'LocalHost' => "0.0.0.0",

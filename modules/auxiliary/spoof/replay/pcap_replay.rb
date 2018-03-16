@@ -45,7 +45,7 @@ class MetasploitModule < Msf::Auxiliary
     print_status("Sending file...") unless verbose
     while (loop > 0 or infinity) do
       vprint_status("Sending file (loop: #{count = count + 1})")
-      inject_pcap(filename, file_filter, pkt_delay )
+      inject_pcap(filename, filter: file_filter, delay: pkt_delay)
       loop -= 1 unless infinity
       Kernel.select(nil, nil, nil, (delay * 1.0)/1000) if loop > 0 or infinity
     end
