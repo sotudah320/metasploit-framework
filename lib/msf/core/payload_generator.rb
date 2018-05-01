@@ -1,5 +1,5 @@
 # -*- coding: binary -*-
-require 'msf/core/payload/apk'
+require 'msf/core/payload'
 require 'active_support/core_ext/numeric/bytes'
 module Msf
 

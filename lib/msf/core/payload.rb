@@ -21,9 +21,11 @@ class Payload < Msf::Module
 
   # Platform specific includes
   require 'msf/core/payload/aix'
+  require 'msf/core/payload/apk'
   require 'msf/core/payload/bsd'
   require 'msf/core/payload/linux'
   require 'msf/core/payload/osx'
+  require 'msf/core/payload/php'
   require 'msf/core/payload/solaris'
   require 'msf/core/payload/windows'
   require 'msf/core/payload/netware'

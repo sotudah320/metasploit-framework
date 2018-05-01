@@ -641,9 +641,6 @@ require 'msf/core/exe/segment_appender'
       opts[:payload] = 'stdin'
       opts[:encoder] = '@x86/service,'+(opts[:serviceencoder] || '')
 
-      # XXX This should not be required, it appears there is a dependency inversion
-      # See https://github.com/rapid7/metasploit-framework/pull/9851
-      require 'msf/core/payload_generator'
       venom_generator = Msf::PayloadGenerator.new(opts)
       code_service = venom_generator.multiple_encode_payload(code)
       return to_winpe_only(framework, code_service, opts)
