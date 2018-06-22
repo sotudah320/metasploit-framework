@@ -1,13 +1,12 @@
-# This file is part of the Metasploit Framework and may be subject to
-# redistribution and commercial restrictions. Please see theMetasploit
-# web site for more information on licensing and terms of use.
-# http://metasploit.com/
+##
+# This module requires Metasploit: https://metasploit.com/download
+# Current source: https://github.com/rapid7/metasploit-framework
+##
 require 'msf/core/module/data_store'
 require 'msf/core/module/options'
-require 'msf/core/empire_lib.rb'
+require 'msf/core/empire_lib'
 
 module MetasploitModule
-  include Msf::Empire
   include Msf::Module::Options
   include Msf::Module::DataStore
   def initialize(info={})

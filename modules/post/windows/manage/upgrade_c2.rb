@@ -5,11 +5,8 @@
 
 require 'msf/core/post/windows/reflective_dll_injection'
 require 'msf/core/empire_lib'
-require 'msf/core/Empire-UI'
 class MetasploitModule < Msf::Post
   include Msf::Post::Windows::ReflectiveDLLInjection
-  include Msf::Empire
-  include Msf::EmpireUI
 
   def initialize(info={})
     super(update_info(info,
@@ -20,7 +17,7 @@ class MetasploitModule < Msf::Post
                       "SessionTypes"        => ["meterpreter"],
                       "Author"              => ["author"]
                      ))
-    register_option(
+    register_options(
       [
         OptPort.new('LPORT',[false, 'Port for payload to connect to, make sure port is not already in use', 7878 ]),
         OptString.new('PathToEmpire', [true, 'The Complete path to Empire-Web API']),
