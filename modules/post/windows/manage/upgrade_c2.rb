@@ -12,7 +12,7 @@ class MetasploitModule < Msf::Post
   include Msf::EmpireUI
 
   def initialize(info={})
-    super(update_indo(info,
+    super(update_info(info,
                       "Name"                => "Upgrading to Empire from Meterpreter Post Module",
                       "Description"         => " This module will set up a bridge between the already existing meterpretr session and the Empire instance hosted over the port 1337. Please note that you need to have Empire Web-API preinstalled in your machine.",
                       "LICENSE"             => MSF_LICENSE,
@@ -22,9 +22,9 @@ class MetasploitModule < Msf::Post
                      ))
     register_option(
       [
-        OptPort.new('LPORT',[false, 'Port for payload to connect to, make sure port is not already in use', 7878 ])
-        OptString.new('PathToEmpire', [true, 'The Complete Path to Empire-Web API']),
-        OptInt.new('PID', [true, ,'Process Identifier to inject the Empire payload into'])
+        OptPort.new('LPORT',[false, 'Port for payload to connect to, make sure port is not already in use', 7878 ]),
+        OptString.new('PathToEmpire', [true, 'The Complete path to Empire-Web API']),
+        OptInt.new('PID', [true,'Process Identifier to inject the Empire payload into'])
       ])
   end
     #run method for when run command is issued
