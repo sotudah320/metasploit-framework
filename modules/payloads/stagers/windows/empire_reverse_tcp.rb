@@ -5,6 +5,7 @@
 require 'msf/core/module/data_store'
 require 'msf/core/module/options'
 require 'msf/core/empire_lib'
+require 'msf/core/handler/empire_reverse_tcp'
 
 module MetasploitModule
   include Msf::Payload::Stager
@@ -17,7 +18,7 @@ module MetasploitModule
     'License'    => MSF_LICENSE,-
     'Platform'   => ['Windows', 'Linux', 'MacOS'],
     'Arch'       => ARCH_CMD,
-    'Handler'    => Msf::Handler::ReverseTcp
+    'Handler'    => Msf::Handler::EmpireReverseTcp
     ))
     register_options(
       [OptAddress.new(
