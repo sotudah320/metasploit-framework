@@ -7,16 +7,17 @@ require 'msf/core/module/options'
 require 'msf/core/empire_lib'
 
 module MetasploitModule
-  include Msf::Module::Options
-  include Msf::Module::DataStore
+  include Msf::Payload::Stager
+
   def initialize(info={})
     super(merge_info(info,
     'Name'       => 'Empire Stager Module',
     'Description'=> 'This creates a standalone stager for Empire using the Rest-API',
     'Author'     => ['author_name'],
     'License'    => MSF_LICENSE,-
-    'Platform'   => ['Windows', 'Linux', 'MacOS']
-    #'Handler'    => Msf::Handler::EmpireShimHandler
+    'Platform'   => ['Windows', 'Linux', 'MacOS'],
+    'Arch'       => ARCH_CMD,
+    'Handler'    => Msf::Handler::ReverseTcp
     ))
     register_options(
       [OptAddress.new(
@@ -56,6 +57,7 @@ module MetasploitModule
         '/'])
     ])
   end
+
   def payload_name(stager)
     @rand_no = rand(1..10000)
     case stager
@@ -81,7 +83,10 @@ module MetasploitModule
         return "/tmp/launcher#{@rand_no}.war"
     end
   end
+
   def generate
+    return ""
+
     #
     #Storing data from user
     #
