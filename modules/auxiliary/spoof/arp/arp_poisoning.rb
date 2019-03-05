@@ -44,7 +44,7 @@ class MetasploitModule < Msf::Auxiliary
       OptBool.new(  'BROADCAST',    	[true, 'If set, the module will send replies on the broadcast address witout consideration of DHOSTS', false])
     ])
 
-    deregister_options('SNAPLEN', 'FILTER', 'PCAPFILE','RHOST','SECRET','GATEWAY_PROBE_HOST','GATEWAY_PROBE_PORT')
+    deregister_capture_options
   end
 
   def run

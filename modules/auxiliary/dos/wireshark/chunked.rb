@@ -24,12 +24,12 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'DisclosureDate' => 'Feb 22 2007'))
 
+    deregister_capture_options
+
     register_options([
       OptInt.new('SPORT', [true, 'The source port used to send the malicious HTTP response', 80]),
       OptAddress.new('SHOST', [false, 'This option can be used to specify a spoofed source address', nil])
     ])
-
-    deregister_options('FILTER','PCAPFILE')
   end
 
   def run

@@ -28,15 +28,13 @@ class MetasploitModule < Msf::Auxiliary
         ]
     )
 
+    deregister_capture_options
+
     register_options(
         [
           OptString.new('PORTS', [true, "Ports to scan (e.g. 22-25,80,110-900)", "21,22,23,80,443"]),
-          OptString.new('INTERFACE', [true, "The name of the interface", "eth0"]),
           OptInt.new('TIMEOUT', [true, "The reply read timeout in milliseconds", 500])
         ])
-
-    deregister_options('FILTER','PCAPFILE','SNAPLEN')
-
   end
 
   def probe_reply(pcap, to)

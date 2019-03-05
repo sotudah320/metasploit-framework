@@ -38,6 +38,8 @@ attr_accessor :sock, :thread
       'DefaultAction'  => 'Service'
     )
 
+    deregister_capture_options
+
     register_options([
       OptAddress.new('SPOOFIP4', [ true, "IPv4 address with which to spoof A-record queries", ""]),
       OptAddress.new('SPOOFIP6', [ false, "IPv6 address with which to spoof AAAA-record queries", ""]),
@@ -45,7 +47,6 @@ attr_accessor :sock, :thread
       OptInt.new('TTL', [ false, "Time To Live for the spoofed response (in seconds)", 120]),
     ])
 
-    deregister_options('RHOST', 'PCAPFILE', 'SNAPLEN', 'FILTER')
     self.thread = nil
     self.sock = nil
   end

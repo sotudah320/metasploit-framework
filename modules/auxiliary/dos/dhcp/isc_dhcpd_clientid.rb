@@ -30,12 +30,14 @@ class MetasploitModule < Msf::Auxiliary
           [ 'EDB', '14185']
         ]
     )
+
+    deregister_capture_options
+
     register_options(
       [
         OptAddress.new('RIP', [true, 'A valid IP to request from the server'])
       ]
     )
-    deregister_options('FILTER','PCAPFILE','SNAPLEN','TIMEOUT')
   end
 
   def run

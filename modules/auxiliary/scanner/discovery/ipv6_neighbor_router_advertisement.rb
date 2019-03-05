@@ -30,7 +30,7 @@ class MetasploitModule < Msf::Auxiliary
       OptInt.new('TIMEOUT_NEIGHBOR', [true, "Time (seconds) to listen for a solicitation response.", 1])
     ])
 
-    deregister_options('SNAPLEN', 'FILTER', 'PCAPFILE')
+    deregister_capture_options
   end
 
   def generate_prefix()

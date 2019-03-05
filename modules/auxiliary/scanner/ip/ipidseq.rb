@@ -40,7 +40,7 @@ class MetasploitModule < Msf::Auxiliary
       OptInt.new('SAMPLES', [true, "The IPID sample size", 6])
     ])
 
-    deregister_options('FILTER','PCAPFILE')
+    deregister_capture_options
   end
 
   def rport

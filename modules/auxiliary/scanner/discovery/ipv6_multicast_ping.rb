@@ -22,7 +22,7 @@ class MetasploitModule < Msf::Auxiliary
       ]
     )
 
-    deregister_options('SNAPLEN', 'FILTER', 'PCAPFILE')
+    deregister_capture_options
   end
 
   def listen_for_ping_response(opts = {})

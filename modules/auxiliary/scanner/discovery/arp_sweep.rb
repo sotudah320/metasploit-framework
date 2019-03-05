@@ -20,14 +20,14 @@ class MetasploitModule < Msf::Auxiliary
       'License'     => MSF_LICENSE
     )
 
+    deregister_capture_options
+
     register_options([
       OptString.new('SHOST', [false, "Source IP Address"]),
       OptString.new('SMAC', [false, "Source MAC Address"]),
       # one re-register TIMEOUT here with a lower value, cause 5 seconds will be enough in most of the case
       OptInt.new('TIMEOUT', [true, 'The number of seconds to wait for new data', 5]),
     ])
-
-    deregister_options('SNAPLEN', 'FILTER', 'PCAPFILE', 'SECRET', 'GATEWAY_PROBE_HOST', 'GATEWAY_PROBE_PORT')
   end
 
   def run_batch_size

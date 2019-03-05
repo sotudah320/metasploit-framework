@@ -38,12 +38,13 @@ class MetasploitModule < Msf::Auxiliary
       'DefaultAction'  => 'Service'
     )
 
+    deregister_capture_options
+
     register_options([
       OptAddress.new('SPOOFIP', [ true, "IP address with which to poison responses", "127.0.0.1"]),
       OptRegexp.new('REGEX', [ true, "Regex applied to the NB Name to determine if spoofed reply is sent", '.*']),
     ])
 
-    deregister_options('RHOST', 'PCAPFILE', 'SNAPLEN', 'FILTER')
     self.thread = nil
     self.sock = nil
   end

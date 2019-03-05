@@ -28,7 +28,7 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'DisclosureDate' => 'Apr 26 2000'))
 
-    deregister_options('FILTER','PCAPFILE', 'INTERFACE', 'SNAPLEN', 'TIMEOUT')
+    deregister_capture_options
   end
 
   def run

@@ -18,16 +18,15 @@ class MetasploitModule < Msf::Auxiliary
       'License'     => MSF_LICENSE
     )
 
+    deregister_capture_options
+
     register_options([
       OptString.new('PORTS', [true, "Ports to scan (e.g. 22-25,80,110-900)", "1-10000"]),
       OptInt.new('TIMEOUT', [true, "The reply read timeout in milliseconds", 500]),
       OptInt.new('BATCHSIZE', [true, "The number of hosts to scan per set", 256]),
       OptInt.new('DELAY', [true, "The delay between connections, per thread, in milliseconds", 0]),
       OptInt.new('JITTER', [true, "The delay jitter factor (maximum value by which to +/- DELAY) in milliseconds.", 0]),
-      OptString.new('INTERFACE', [false, 'The name of the interface'])
     ])
-
-    deregister_options('FILTER','PCAPFILE')
   end
 
   # No IPv6 support yet

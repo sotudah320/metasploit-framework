@@ -15,14 +15,14 @@ class MetasploitModule < Msf::Auxiliary
       'License'     => MSF_LICENSE
     )
 
+    deregister_capture_options
+
     register_options([
       Opt::RPORT(80),
       OptAddress.new('SHOST', [false, 'The spoofable source address (else randomizes)']),
       OptInt.new('SPORT', [false, 'The source port (else randomizes)']),
       OptInt.new('NUM', [false, 'Number of SYNs to send (else unlimited)'])
     ])
-
-    deregister_options('FILTER','PCAPFILE')
   end
 
   def sport

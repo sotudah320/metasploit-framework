@@ -29,7 +29,7 @@ class MetasploitModule < Msf::Auxiliary
       OptString.new('INTERFACE', [false, 'The name of the interface'])
     ])
 
-    deregister_options('FILTER','PCAPFILE')
+    deregister_capture_options
   end
 
   # No IPv6 support yet

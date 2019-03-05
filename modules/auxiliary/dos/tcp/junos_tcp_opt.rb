@@ -25,13 +25,13 @@ class MetasploitModule < Msf::Auxiliary
         ]
     )
 
+    deregister_capture_options
+
     register_options([
       OptInt.new('RPORT', [false, 'The destination port (defaults to random)']),
       OptInt.new('SPORT', [false, 'Source port (defaults to random)']),
       OptAddress.new('SHOST', [false, 'Source address (defaults to random)'])
     ])
-
-    deregister_options('FILTER','PCAPFILE', 'SNAPLEN')
   end
 
   def rport

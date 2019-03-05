@@ -40,13 +40,14 @@ attr_accessor :sock, :thread
       'DefaultAction'  => 'Service'
     )
 
+    deregister_capture_options
+
     register_options([
       OptAddress.new('SPOOFIP', [ true, "IP address with which to poison responses", ""]),
       OptRegexp.new('REGEX', [ true, "Regex applied to the LLMNR Name to determine if spoofed reply is sent", '.*']),
       OptInt.new('TTL', [ false, "Time To Live for the spoofed response", 30]),
     ])
 
-    deregister_options('RHOST', 'PCAPFILE', 'SNAPLEN', 'FILTER')
     self.thread = nil
     self.sock = nil
   end

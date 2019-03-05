@@ -21,11 +21,11 @@ class MetasploitModule < Msf::Auxiliary
       'PassiveActions' => [ 'Service' ],
       'DefaultAction'  => 'Service'
     )
+    deregister_capture_options
     register_options(
       [
         OptString.new('SMAC',    	[false, 'The spoofed mac (if unset, derived from netifaces)']),
       ])
-    deregister_options('RHOST', 'PCAPFILE')
   end
 
   def setup

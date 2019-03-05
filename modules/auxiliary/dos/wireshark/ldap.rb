@@ -23,12 +23,12 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'DisclosureDate' => 'Mar 28 2008')
 
+    deregister_capture_options
+
     register_options([
       OptInt.new('RPORT', [true, 'The destination port', 389]),
       OptAddress.new('SHOST', [false, 'This option can be used to specify a spoofed source address', nil])
     ])
-
-    deregister_options('FILTER','PCAPFILE')
   end
 
   def run

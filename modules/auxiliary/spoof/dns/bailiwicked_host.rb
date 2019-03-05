@@ -34,6 +34,8 @@ class MetasploitModule < Msf::Auxiliary
       'DisclosureDate' => 'Jul 21 2008'
       ))
 
+      deregister_capture_options
+
       register_options(
         [
           OptEnum.new('SRCADDR', [true, 'The source address to use for sending the queries', 'Real', ['Real', 'Random'], 'Real']),
@@ -45,9 +47,6 @@ class MetasploitModule < Msf::Auxiliary
           OptInt.new('TTL', [true, 'The TTL for the malicious host entry', rand(20000)+30000]),
 
         ])
-
-      deregister_options('FILTER','PCAPFILE')
-
   end
 
   def auxiliary_commands

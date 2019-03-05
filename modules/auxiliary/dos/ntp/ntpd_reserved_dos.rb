@@ -31,12 +31,12 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'DisclosureDate' => 'Oct 04 2009'))
 
+      deregister_capture_options
+
       register_options(
         [
           OptAddressLocal.new('LHOST', [true, "The spoofed address of a vulnerable ntpd server" ])
         ])
-      deregister_options('FILTER','PCAPFILE')
-
   end
 
   def run_host(ip)

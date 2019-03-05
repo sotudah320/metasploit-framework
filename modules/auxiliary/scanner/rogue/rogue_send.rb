@@ -21,14 +21,14 @@ class MetasploitModule < Msf::Auxiliary
       'License'     => MSF_LICENSE
     )
 
+    deregister_capture_options
+
     register_options([
       OptAddress.new("EHOST", [true, "The IP address of the machine running rogue_recv"]),
       OptPort.new("RPORT", [true, "The destination port for the TCP SYN packet", 80]),
       OptPort.new("CPORT", [true, "The source port for the TCP SYN packet", 13832]),
       OptInt.new("ECHOID", [true, "The unique ICMP ECHO ID to embed into the packet", 7893]),
     ])
-
-    deregister_options('FILTER','PCAPFILE')
   end
 
   def run_host(ip)

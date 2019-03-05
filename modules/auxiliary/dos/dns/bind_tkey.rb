@@ -34,12 +34,12 @@ class MetasploitModule < Msf::Auxiliary
       'DefaultOptions' => {'ScannerRecvWindow' => 0}
     ))
 
+    deregister_capture_options
+
     register_options([
       Opt::RPORT(53),
       OptAddress.new('SRC_ADDR', [false, 'Source address to spoof'])
     ])
-
-    deregister_options('PCAPFILE', 'FILTER', 'SNAPLEN', 'TIMEOUT')
   end
 
   def scan_host(ip)

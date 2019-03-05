@@ -27,6 +27,9 @@ class MetasploitModule < Msf::Auxiliary
       'DefaultAction' => 'Spoof'
     )
 
+    deregister_capture_options
+    deregister_options('RHOST')
+
     register_options(
       [
         OptString.new('SMAC', [false, "MAC Address for MAC Spoofing"]),
@@ -39,8 +42,6 @@ class MetasploitModule < Msf::Auxiliary
         OptString.new('SOFTWARE', [true, "Software of the device", "SCCP75.9-3-1SR2-1S"]),
         OptBool.new('FULL_DUPLEX', [true, 'True iff full-duplex, false otherwise', true])
       ])
-
-    deregister_options('FILTER', 'PCAPFILE', 'RHOST', 'SNAPLEN', 'TIMEOUT')
   end
 
   def setup

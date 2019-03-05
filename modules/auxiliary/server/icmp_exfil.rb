@@ -54,7 +54,8 @@ class MetasploitModule < Msf::Auxiliary
       OptAddress.new('LOCALIP', [false, 'The IP address of the local interface'])
     ])
 
-    deregister_options('SNAPLEN','FILTER','PCAPFILE','RHOST','SECRET','GATEWAY_PROBE_HOST', 'GATEWAY_PROBE_PORT', 'TIMEOUT')
+    deregister_capture_options
+    deregister_options('RHOST')
   end
 
   def run
