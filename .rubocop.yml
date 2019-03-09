@@ -63,6 +63,9 @@ Layout/IndentHeredoc:
   Enabled: false
   Description: 'We need to leave this disabled for Ruby 2.2 compat, remove in 2018'
 
+Layout/IndentHash:
+  Enabled: false
+
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: false
   Description: 'Almost all module metadata have space in brackets'
@@ -91,7 +94,19 @@ Style/ParenthesesAroundCondition:
   Enabled: false
   Description: 'This is used in too many places to discount, especially in ported code. Has little effect'
 
+Style/RedundantParentheses:
+  Enabled: false
+  Description: 'This is similar to ParenthesesAroundCondition, it is often included to enhance readability'
+
+Style/BracesAroundHashParameters:
+  Enabled: false
+  Description: 'These stopped being required in newer Ruby versions, but there is still a lot of code that uses them'
+
 Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+  Description: 'This is often a useful pattern, and is actually required by other languages. It does not hurt.'
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
   Description: 'This is often a useful pattern, and is actually required by other languages. It does not hurt.'
 
