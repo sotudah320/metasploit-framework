@@ -134,10 +134,6 @@ def run_cmd(cmd, input: nil, env: {})
 end
 
 def run_psql(cmd, db_name: 'postgres')
-  if @options[:debug]
-    puts "psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}"
-  end
-
   run_cmd("psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}")
 end
 
