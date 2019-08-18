@@ -53,8 +53,6 @@ require 'msf/util/helper'
     debug: false,
     msf_db_name: 'msf',
     msf_db_user: 'msf',
-    msftest_db_name: 'msftest',
-    msftest_db_user: 'msftest',
     db_port: 5433,
     db_pool: 200,
     address: 'localhost',
@@ -246,15 +244,10 @@ def init_db
 
   puts 'Creating database users'
   run_psql("create user #{@options[:msf_db_user]} with password '#{@msf_pass}'")
-  run_psql("create user #{@options[:msftest_db_user]} with password '#{@msftest_pass}'")
   run_psql("alter role #{@options[:msf_db_user]} createdb")
-  run_psql("alter role #{@options[:msftest_db_user]} createdb")
   run_psql("alter role #{@options[:msf_db_user]} with password '#{@msf_pass}'")
-  run_psql("alter role #{@options[:msftest_db_user]} with password '#{@msftest_pass}'")
   run_cmd("createdb -p #{@options[:db_port]} -O #{@options[:msf_db_user]} -h 127.0.0.1 -U #{@options[:msf_db_user]} -E UTF-8 -T template0 #{@options[:msf_db_name]}",
           input: "#{@msf_pass}\n#{@msf_pass}\n")
-  run_cmd("createdb -p #{@options[:db_port]} -O #{@options[:msftest_db_user]} -h 127.0.0.1 -U #{@options[:msftest_db_user]} -E UTF-8 -T template0 #{@options[:msftest_db_name]}",
-          input: "#{@msftest_pass}\n#{@msftest_pass}\n")
 
   write_db_client_auth_config
   restart_db
@@ -266,42 +259,31 @@ def init_db
 end
 
 def load_db_config
-  if File.file?(@db_conf)
-    config = YAML.load(File.read(@db_conf))
-
-    production = config['production']
-    if production.nil?
-      puts "No production section found in database config #{@db_conf}."
-      return false
-    end
-
-    test = config['test']
-    if test.nil?
-      puts "No test section found in database config #{@db_conf}."
-      return false
-    end
-
-    # get values for development and production
-    @options[:msf_db_name] = production['database']
-    @options[:msf_db_user] = production['username']
-    @msf_pass = production['password']
-    @options[:db_port] = production['port']
-    @options[:db_pool] = production['pool']
-
-    # get values for test
-    @options[:msftest_db_name] = test['database']
-    @options[:msftest_db_user] = test['username']
-    @msftest_pass = test['password']
-    return true
+  unless File.file?(@db_conf)
+    puts "Database config not found #{@db_conf}."
+    return false
   end
 
-  return false
+  config = YAML.load(File.read(@db_conf))
+
+  production = config['production']
+  if production.nil?
+    puts "No production section found in database config #{@db_conf}."
+    return false
+  end
+
+  @options[:msf_db_name] = production['database']
+  @options[:msf_db_user] = production['username']
+  @msf_pass = production['password']
+  @options[:db_port] = production['port']
+  @options[:db_pool] = production['pool']
+
+  true
 end
 
 def write_db_config
   # Generate new database passwords if not already assigned
   @msf_pass ||= pw_gen
-  @msftest_pass ||= pw_gen
 
   # Write a default database config file
   Dir.mkdir(@localconf) unless File.directory?(@localconf)
@@ -318,12 +300,6 @@ def write_db_config
 
       production: &production
         <<: *pgsql
-
-      test:
-        <<: *pgsql
-        database: #{@options[:msftest_db_name]}
-        username: #{@options[:msftest_db_user]}
-        password: #{@msftest_pass}
     EOF
   end
 
@@ -335,8 +311,6 @@ def write_db_client_auth_config
   puts "Writing client authentication configuration file #{client_auth_config}"
   File.open(client_auth_config, 'w') do |f|
     f.puts "host    \"#{@options[:msf_db_name]}\"      \"#{@options[:msf_db_user]}\"      127.0.0.1/32           md5"
-    f.puts "host    \"#{@options[:msftest_db_name]}\"  \"#{@options[:msftest_db_user]}\"  127.0.0.1/32           md5"
-    f.puts "host    \"postgres\"  \"#{@options[:msftest_db_user]}\"  127.0.0.1/32           md5"
     f.puts "host    \"template1\"   all                127.0.0.1/32           trust"
     if Gem.win_platform?
       f.puts "host    all             all                127.0.0.1/32           trust"
@@ -883,14 +857,6 @@ def parse_args(args)
 
     opts.on('--msf-db-user-name USER', "Database username (default: #{@options[:msf_db_user]})") { |u|
       @options[:msf_db_user] = u
-    }
-
-    opts.on('--msf-test-db-name NAME', "Test database name (default: #{@options[:msftest_db_name]})") { |n|
-      @options[:msftest_db_name] = n
-    }
-
-    opts.on('--msf-test-db-user-name USER', "Test database username (default: #{@options[:msftest_db_user]})") { |u|
-      @options[:msftest_db_user] = u
     }
 
     opts.on('--db-port PORT', Integer, "Database port (default: #{@options[:db_port]})") { |p|
