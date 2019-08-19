@@ -860,7 +860,7 @@ def parse_args(args)
       @options[:msf_db_user] = u
     }
 
-    opts.on('--db-flavor FLAVOR', /(user|debian)/, "Database flavor (default: user, debian)") { |f|
+    opts.on('--db-flavor FLAVOR', /(user|debian)/, "Database flavor (default: #{@options[:db_flavor]})") { |f|
       @options[:db_flavor] = f
     }
 
