@@ -53,6 +53,7 @@ require 'msf/util/helper'
     debug: false,
     msf_db_name: 'msf',
     msf_db_user: 'msf',
+    db_flavor: 'standard',
     db_port: 5433,
     db_pool: 200,
     address: 'localhost',
@@ -859,6 +860,10 @@ def parse_args(args)
       @options[:msf_db_user] = u
     }
 
+    opts.on('--db-flavor FLAVOR', /(user|debian)/, "Database flavor (default: user, debian)") { |f|
+      @options[:db_flavor] = f
+    }
+
     opts.on('--db-port PORT', Integer, "Database port (default: #{@options[:db_port]})") { |p|
       @options[:db_port] = p
     }
@@ -949,26 +954,35 @@ def invoke_command(commands, component, command)
   end
 end
 
+def installed(cmd)
+  !Msf::Util::Helper.which(cmd).nil?
+end
+
 def has_requirements
-  ret_val = true
-  postgresql_cmds = %w(psql pg_ctl initdb createdb)
-  other_cmds = %w(bundle thin)
-  missing_msg = "Missing requirement: %<name>s does not appear to be installed or '%<prog>s' is not in the environment path"
-
-  postgresql_cmds.each do |cmd|
-    next unless Msf::Util::Helper.which(cmd).nil?
-    puts missing_msg % { name: 'PostgreSQL', prog: cmd }
-    ret_val = false
+  if !installed('bundle')
+    puts "Bundler not installed, please ensure the 'bundle' command works"
+    return false
   end
 
-  other_cmds.each do |cmd|
-    if Msf::Util::Helper.which(cmd).nil?
-      puts missing_msg % { name: "'#{cmd}'", prog: cmd }
-      ret_val = false
+  if !installed('thin')
+    puts "Thin webserver not installed, please ensure the 'thin' command works"
+    return false
+  end
+
+  if installed('psql') && installed('createdb')
+    if installed('pg_ctl') && installed('initdb')
+      puts "Detected standard PostgreSQL installation"
+    elsif installed('pg_createcluster')
+      puts "Detected Debian-flavored PostgreSQL installation"
+      @options[:db_flavor] = 'debian'
+      @options[:db_port] = 5432
     end
+  else
+    puts "PostgreSQL not installed, please ensure the 'pg_ctl' command works"
+    return false
   end
 
-  ret_val
+  true
 end
 
 
@@ -1006,6 +1020,7 @@ end
 
 
 if $PROGRAM_NAME == __FILE__
+  had_requirements = has_requirements
   parse_args(ARGV)
 
   # Bomb out if we're root
@@ -1014,7 +1029,7 @@ if $PROGRAM_NAME == __FILE__
     abort
   end
 
-  unless has_requirements
+  unless had_requirements
     abort
   end
 
