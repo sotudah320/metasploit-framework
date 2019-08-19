@@ -29,9 +29,14 @@ require 'msf/util/helper'
 @script_name = File.basename(__FILE__)
 @framework = File.expand_path(File.dirname(__FILE__))
 
-@localconf = Msf::Config.get_config_root
+if Msf::Config.install_root == "/usr/share/metasploit-framework"
+  @localconf = "#{Msf::Config.install_root}/config"
+else
+  @localconf = Msf::Config.get_config_root
+end
 @db = "#{@localconf}/db"
 @db_conf = "#{@localconf}/database.yml"
+
 
 @ws_tag = 'msf-ws'
 @ws_conf = File.join(@framework, "#{@ws_tag}.ru")
@@ -832,7 +837,7 @@ def parse_args(args)
   USAGE
 
   parser = OptionParser.new do |opts|
-    opts.banner = "Usage: #{@script_name} [options] <command>"
+    opts.banner = "\nUsage: #{@script_name} [options] <command>"
     opts.separator('Manage a Metasploit Framework database and web service')
     opts.separator('')
     opts.separator('General Options:')
