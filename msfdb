@@ -96,6 +96,10 @@ class String
     substitute_colors("%red#{self}%clr")
   end
 
+  def yellow
+    substitute_colors("%yel#{self}%clr")
+  end
+
   def green
     substitute_colors("%grn#{self}%clr")
   end
@@ -167,7 +171,7 @@ def status_db
   end
 end
 
-def started_db
+def started_db_standard
   if run_cmd("pg_ctl -o \"-p #{@options[:db_port]}\" -D #{@db} status") == 0
     puts "Database already started at #{@db}"
     return true
@@ -185,7 +189,7 @@ def started_db
   end
 end
 
-def start_db
+def start_db_standard
   if !Dir.exist?(@db)
     puts "No database found at #{@db}, not starting"
     return
@@ -193,7 +197,7 @@ def start_db
 
   update_db_port
 
-  if !started_db
+  if !started_db_standard
     last_log = tail("#{@db}/log")
     puts last_log
     if last_log =~ /not compatible/
@@ -203,15 +207,41 @@ def start_db
   end
 end
 
-def stop_db
+def start_db_debian
+  if run_cmd("systemctl status postgresql") != 0; then
+    puts "[+]".green.bold + " Starting database"
+    run_cmd("systemctl start postgresql")
+  else
+    puts "[+]".yellow.bold + " Database already started"
+  end
+end
+
+def start_db
+  eval("start_db_#{@options[:db_flavor]}")
+end
+
+def stop_db_standard
   update_db_port
 
   if run_cmd("pg_ctl -o \"-p #{@options[:db_port]}\" -D #{@db} status") == 0
-    puts "Stopping database at #{@db}"
+    puts "[+]".green.bold + " Stopping database at #{@db}"
     run_cmd("pg_ctl -o \"-p #{@options[:db_port]}\" -D #{@db} stop")
   else
-    puts "Database is no longer running at #{@db}"
+    puts "[+]".green.bold + " Database is no longer running at #{@db}"
   end
+end
+
+def stop_db_debian
+  if run_cmd("systemctl status postgresql") == 0; then
+    puts "[+]".green.bold + " Stopping database"
+    run_cmd("systemctl stop postgresql")
+  else
+    puts "[+]".yellow.bold + " Database already stopped"
+  end
+end
+
+def stop_db
+  eval("stop_db_#{@options[:db_flavor]}")
 end
 
 def restart_db
@@ -429,17 +459,17 @@ def status_web_service
   ws_pid = web_service_pid
   status = web_service_pid_status
   if status == WebServicePIDStatus::RUNNING
-    puts "MSF web service is running as PID #{ws_pid}"
+    puts "[+]".green.bold + "MSF web service is running as PID #{ws_pid}"
   elsif status == WebServicePIDStatus::INACTIVE
-    puts "MSF web service is not running: PID file found at #{@ws_pid}, but no active process running as PID #{ws_pid}"
+    puts "[-]".red.bold + "MSF web service is not running: PID file found at #{@ws_pid}, but no active process running as PID #{ws_pid}"
   elsif status == WebServicePIDStatus::NO_PID_FILE
-    puts "MSF web service is not running: no PID file found at #{@ws_pid}"
+    puts "[-]".red.bold + "MSF web service is not running: no PID file found at #{@ws_pid}"
   end
 end
 
 def init_web_service
   if web_service_pid_status == WebServicePIDStatus::RUNNING
-    puts "MSF web service is already running as PID #{web_service_pid}"
+    puts "[+]".green.bold + " MSF web service is already running as PID #{web_service_pid}"
     return false
   end
 
@@ -483,7 +513,7 @@ def start_web_service(expect_auth: true)
   ws_pid = web_service_pid
   status = web_service_pid_status
   if status == WebServicePIDStatus::RUNNING
-    puts "MSF web service is already running as PID #{ws_pid}"
+    puts "[+]".green.bold + " MSF web service is already running as PID #{ws_pid}"
     return false
   elsif status == WebServicePIDStatus::INACTIVE
     puts "MSF web service PID file found, but no active process running as PID #{ws_pid}"
@@ -492,7 +522,7 @@ def start_web_service(expect_auth: true)
   end
 
   # daemonize MSF web service
-  print 'Attempting to start MSF web service...'
+  puts '[+]'.green.bold + ' Attempting to start MSF web service...'
   if run_cmd("#{thin_cmd} start") == 0
     # wait until web service is online
     retry_count = 0
@@ -509,16 +539,13 @@ def start_web_service(expect_auth: true)
     end
 
       if response_data[:state] == :online
-      puts "#{'success'.green.bold}"
-      puts 'MSF web service started and online'
+      puts "[+]".green.bold + ' MSF web service started and online'
       return true
       elsif response_data[:state] == :error
-      puts "#{'failed'.red.bold}"
-      print_error 'MSF web service appears to be started, but may not operate as expected.'
+      print_error "[-]".red.bold + ' MSF web service appears to be started, but may not operate as expected.'
       puts "#{response_data[:message]}"
       else
-      puts "#{'failed'.red.bold}"
-      print_error 'MSF web service does not appear to be started.'
+      print_error "[-]".red.bold + ' MSF web service does not appear to be started.'
     end
     puts "Please see #{@ws_log} for additional details."
     return false
@@ -533,10 +560,10 @@ def stop_web_service
   ws_pid = web_service_pid
   status = web_service_pid_status
   if status == WebServicePIDStatus::RUNNING
-    puts "Stopping MSF web service PID #{ws_pid}"
+    puts "[+]".green.bold + " Stopping MSF web service PID #{ws_pid}"
     run_cmd("#{thin_cmd} stop")
   else
-    puts 'MSF web service is no longer running'
+    puts "[+]".green.bold + ' MSF web service is no longer running'
     if status == WebServicePIDStatus::INACTIVE
       puts "Deleting MSF web service PID file #{@ws_pid}"
       File.delete(@ws_pid)
@@ -570,7 +597,7 @@ def generate_web_service_ssl(key:, cert:)
     return
   end
 
-  puts 'Generating SSL key and certificate for MSF web service'
+  puts "[+]".green.bold + ' Generating SSL key and certificate for MSF web service'
   @ssl_key, @ssl_cert, @ssl_extra_chain_cert = Rex::Socket::Ssl.ssl_generate_certificate
 
   # write PEM format key and certificate
@@ -865,7 +892,7 @@ def parse_args(args)
       @options[:msf_db_user] = u
     }
 
-    opts.on('--db-flavor FLAVOR', /(user|debian)/, "Database flavor (default: #{@options[:db_flavor]})") { |f|
+    opts.on('--db-flavor FLAVOR', /(standard|debian)/, "Database flavor (default: #{@options[:db_flavor]})") { |f|
       @options[:db_flavor] = f
     }
 
@@ -976,14 +1003,14 @@ def has_requirements
 
   if installed('psql') && installed('createdb')
     if installed('pg_ctl') && installed('initdb')
-      puts "Detected standard PostgreSQL installation"
+      puts "[+]".green.bold + " Detected standard PostgreSQL installation"
     elsif installed('pg_createcluster')
-      puts "Detected Debian-flavored PostgreSQL installation"
+      puts "[+]".green.bold + " Detected Debian-flavored PostgreSQL installation"
       @options[:db_flavor] = 'debian'
       @options[:db_port] = 5432
     end
   else
-    puts "PostgreSQL not installed, please ensure the 'pg_ctl' command works"
+    puts "[-]".red.bold + "PostgreSQL not installed, please ensure the 'pg_ctl' command works"
     return false
   end
 
