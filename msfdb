@@ -142,9 +142,7 @@ def run_cmd(cmd, input: nil, env: {})
 end
 
 def run_psql(cmd, db_name: 'postgres')
-  cmd = "psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}"
-  puts cmd
-  run_cmd(cmd)
+  run_cmd("psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}")
 end
 
 def pw_gen
@@ -1083,9 +1081,11 @@ if $PROGRAM_NAME == __FILE__
   parse_args(ARGV)
 
   # Bomb out if we're root
-  if !Gem.win_platform? && Process.uid.zero?
-    puts "Please run #{@script_name} as a non-root user"
-    abort
+  if @options[:db_flavor] == "standard"
+    if !Gem.win_platform? && Process.uid.zero?
+      puts "Please run #{@script_name} as a non-root user"
+      abort
+    end
   end
 
   unless had_requirements
