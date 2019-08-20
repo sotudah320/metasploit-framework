@@ -142,7 +142,9 @@ def run_cmd(cmd, input: nil, env: {})
 end
 
 def run_psql(cmd, db_name: 'postgres')
-  run_cmd("psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}")
+  cmd = "psql -p #{@options[:db_port]} -c \"#{cmd};\" #{db_name}"
+  puts cmd
+  run_cmd(cmd)
 end
 
 def pw_gen
@@ -249,22 +251,8 @@ def restart_db
   start_db
 end
 
-def create_db
-  puts "Creating database at #{@db}"
-  Dir.mkdir(@db)
-  run_cmd("initdb --auth-host=trust --auth-local=trust -E UTF8 #{@db}")
-
-  File.open("#{@db}/postgresql.conf", 'a') do |f|
-    f.puts "port = #{@options[:db_port]}"
-  end
-end
-
-def init_db
-  if Dir.exist?(@db)
-    puts "Found a database at #{@db}, checking to see if it is started"
-    start_db
-    return
-  end
+def init_db_common
+  start_db
 
   if File.exist?(@db_conf) && !@options[:delete_existing_data]
     if !load_db_config
@@ -275,23 +263,46 @@ def init_db
     write_db_config
   end
 
-  create_db
-  start_db
-
-  puts 'Creating database users'
+  puts "[+]".green.bold + ' Creating database users'
   run_psql("create user #{@options[:msf_db_user]} with password '#{@msf_pass}'")
   run_psql("alter role #{@options[:msf_db_user]} createdb")
   run_psql("alter role #{@options[:msf_db_user]} with password '#{@msf_pass}'")
   run_cmd("createdb -p #{@options[:db_port]} -O #{@options[:msf_db_user]} -h 127.0.0.1 -U #{@options[:msf_db_user]} -E UTF-8 -T template0 #{@options[:msf_db_name]}",
           input: "#{@msf_pass}\n#{@msf_pass}\n")
 
-  write_db_client_auth_config
   restart_db
 
-  puts 'Creating initial database schema'
+  puts "[+]".green.bold + ' Creating initial database schema'
   Dir.chdir(@framework) do
     run_cmd('bundle exec rake db:migrate')
   end
+end
+
+def init_db_standard
+  if Dir.exist?(@db)
+    puts "[+]".green.bold + " Found a database at #{@db}, checking to see if it is started"
+    start_db
+    return
+  end
+
+  puts "Creating database at #{@db}"
+  Dir.mkdir(@db)
+  run_cmd("initdb --auth-host=trust --auth-local=trust -E UTF8 #{@db}")
+
+  File.open("#{@db}/postgresql.conf", 'a') do |f|
+    f.puts "port = #{@options[:db_port]}"
+  end
+
+  write_db_client_auth_config
+  init_db_common
+end
+
+def init_db_debian
+  init_db_common
+end
+
+def init_db
+  eval("init_db_#{@options[:db_flavor]}")
 end
 
 def load_db_config
@@ -410,21 +421,37 @@ def print_error(error)
   puts "#{'[!]'.red.bold} #{error}"
 end
 
-def delete_db
+def delete_db_standard
   if Dir.exist?(@db)
     stop_db
 
     if @options[:delete_existing_data]
-      puts "Deleting all data at #{@db}"
+      puts "[+]".green.bold + " Deleting all data at #{@db}"
       FileUtils.rm_rf(@db)
-    end
-
-    if @options[:delete_existing_data]
       File.delete(@db_conf)
     end
   else
-    puts "No data at #{@db}, doing nothing"
+    puts "[-]".yellow.bold + " No data at #{@db}, doing nothing"
   end
+end
+
+def delete_db_debian
+  start_db
+
+  if @options[:delete_existing_data]
+    puts "[+]".green.bold + " Dropping database #{@options[:msf_db_name]}"
+    run_cmd("dropdb #{@options[:msf_db_name]}")
+    puts "[+]".green.bold + " Dropping user #{@options[:msf_db_user]}"
+    run_cmd("dropuser #{@options[:msf_db_user]}")
+    if File.exist?(@db_conf)
+      puts "[+]".green.bold + " Deleting configuration file #{@options[:db_conf]}"
+      File.delete(@db_conf)
+    end
+  end
+end
+
+def delete_db
+  eval("delete_db_#{@options[:db_flavor]}")
 end
 
 def reinit_db
@@ -653,7 +680,7 @@ def add_web_service_workspace(name: 'default')
 end
 
 def add_web_service_user
-  puts "Creating MSF web service user #{@msf_ws_user}"
+  puts "[+]".green.bold + " Creating MSF web service user #{@msf_ws_user}"
 
   # Generate new web service user password
   cred_data = { username: @msf_ws_user, password: @msf_ws_pass }
