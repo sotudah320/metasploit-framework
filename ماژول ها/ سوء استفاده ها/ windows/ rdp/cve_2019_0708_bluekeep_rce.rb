@@ -938,7 +938,7 @@ kernel_kapc_routine:
 
     mov ecx, 0x380  ; fix payload size to 0x380 bytes
 
-    rep movsb
+    rep movsb 
 
     ;======================================
     ; find CreateThread address (in kernel32.dll)
